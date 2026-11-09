@@ -1,51 +1,51 @@
 /* =========================================================================
    BOOKIT GLOBAL STYLES & DYNAMIC THEMES
-   Supports both FilmTIX Clean White Theme & IMAGIX Cinema Dark Theme
+   Default: Sleek Cinematic Black & Red Theme
    ========================================================================= */
 :root {
-  --bg-primary: #f3f4f8;
+  --bg-primary: #07080c;           /* Deep cinematic obsidian black */
+  --bg-card: #11141c;              /* Charcoal black card */
+  --bg-card-subtle: #181d29;       /* Subtle dark surface */
+  --text-main: #f8fafc;            /* Crisp clean white */
+  --text-muted: #94a3b8;           /* Muted cool slate */
+  --primary-accent: #e50914;       /* Iconic Cinema Red */
+  --primary-accent-hover: #b80710; /* Deep crimson hover */
+  --primary-accent-light: rgba(229, 9, 20, 0.16);
+  --seat-available: #1f2535;       /* Sleek dark charcoal seat */
+  --seat-available-text: #cbd5e1;
+  --seat-selected: #e50914;        /* Vivid red selected seat */
+  --seat-selected-text: #ffffff;
+  --seat-booked: #0a0c12;          /* Deep matte black booked seat */
+  --seat-booked-text: #475569;
+  --seat-held: #f59e0b;            /* Golden amber temporary hold */
+  --seat-held-text: #ffffff;
+  --border-color: #232a3b;         /* Subtle dark border */
+  --border-radius: 16px;
+  --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.9);
+  --transition-speed: 0.25s;
+}
+
+/* Light Theme (Alternative switchable theme) */
+body.light-mode {
+  --bg-primary: #f4f5f8;
   --bg-card: #ffffff;
   --bg-card-subtle: #f8f9fc;
   --text-main: #14171f;
   --text-muted: #7b8092;
-  --primary-accent: #6366f1;       /* FilmTIX soft purple/indigo */
-  --primary-accent-hover: #4f46e5;
-  --primary-accent-light: #eef2ff;
+  --primary-accent: #e50914;
+  --primary-accent-hover: #b80710;
+  --primary-accent-light: rgba(229, 9, 20, 0.12);
   --seat-available: #e5e7eb;
   --seat-available-text: #4b5563;
-  --seat-selected: #6366f1;
+  --seat-selected: #e50914;
   --seat-selected-text: #ffffff;
   --seat-booked: #1f242d;
   --seat-booked-text: #9ca3af;
   --seat-held: #f59e0b;
   --seat-held-text: #ffffff;
   --border-color: #e5e7eb;
-  --border-radius: 16px;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
-  --transition-speed: 0.25s;
-}
-
-/* Dark Mode (Inspired by IMAGIX Cinema screenshot) */
-body.dark-mode {
-  --bg-primary: #0a0d14;
-  --bg-card: #121722;
-  --bg-card-subtle: #192030;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --primary-accent: #ef4444;       /* Cinematic red / neon */
-  --primary-accent-hover: #dc2626;
-  --primary-accent-light: rgba(239, 68, 68, 0.15);
-  --seat-available: #222b3d;
-  --seat-available-text: #cbd5e1;
-  --seat-selected: #ef4444;
-  --seat-selected-text: #ffffff;
-  --seat-booked: #090c12;
-  --seat-booked-text: #475569;
-  --seat-held: #f59e0b;
-  --seat-held-text: #ffffff;
-  --border-color: #242d40;
 }
 
 * {
@@ -152,7 +152,7 @@ body {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background: linear-gradient(135deg, #e50914, #ff3b30);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,7 +207,7 @@ body {
   background: var(--primary-accent);
   border-color: var(--primary-accent);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(229, 9, 20, 0.45);
 }
 
 .date-card.active .date-day,
@@ -547,7 +547,7 @@ body {
   background: var(--seat-selected);
   color: var(--seat-selected-text);
   transform: scale(1.08);
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.5);
 }
 
 .seat-btn.booked {
@@ -782,7 +782,7 @@ body {
   font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 16px rgba(229, 9, 20, 0.45);
   transition: all var(--transition-speed);
   display: flex;
   justify-content: center;

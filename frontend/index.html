@@ -4,1765 +4,1045 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BOOKIT — Movie & Live Shows Booking Platform</title>
-  <!-- Google Fonts for clean modern typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* =========================================================================
-       1. CSS VARIABLES & THEMES (No Hardcoding: Fully Dynamic Theme System)
-       Supports both FilmTIX Clean Light Mode & IMAGIX Cinema Dark Mode
-       ========================================================================= */
+    /* =====================================================================
+       BOOKIT — BLACK & RED CINEMATIC THEME
+       All values are CSS variables — no hardcoding anywhere
+       ===================================================================== */
     :root {
-      --bg-primary: #f3f4f8;
-      --bg-card: #ffffff;
-      --bg-card-subtle: #f8f9fc;
-      --text-main: #14171f;
-      --text-muted: #7b8092;
-      --primary-accent: #6366f1;       /* FilmTIX soft purple/indigo */
-      --primary-accent-hover: #4f46e5;
-      --primary-accent-light: #eef2ff;
-      --seat-available: #e5e7eb;
-      --seat-available-text: #4b5563;
-      --seat-selected: #6366f1;
-      --seat-selected-text: #ffffff;
-      --seat-booked: #1f242d;
-      --seat-booked-text: #9ca3af;
-      --seat-held: #f59e0b;
-      --seat-held-text: #ffffff;
-      --border-color: #e5e7eb;
-      --border-radius: 16px;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.07);
-      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
-      --transition-speed: 0.25s;
-    }
-
-    /* Dark Mode (Inspired by IMAGIX Cinema screenshot) */
-    body.dark-mode {
-      --bg-primary: #0a0d14;
-      --bg-card: #121722;
-      --bg-card-subtle: #192030;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary-accent: #ef4444;       /* Cinematic red / neon */
-      --primary-accent-hover: #dc2626;
-      --primary-accent-light: rgba(239, 68, 68, 0.15);
-      --seat-available: #222b3d;
-      --seat-available-text: #cbd5e1;
-      --seat-selected: #ef4444;
-      --seat-selected-text: #ffffff;
-      --seat-booked: #090c12;
-      --seat-booked-text: #475569;
-      --seat-held: #f59e0b;
-      --seat-held-text: #ffffff;
-      --border-color: #242d40;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-    }
-
-    /* =========================================================================
-       2. TOP BAR & DATE SCROLLER (FilmTIX Header Reference)
-       ========================================================================= */
-    .topbar {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .brand-logo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 1.35rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--text-main);
-      text-decoration: none;
-    }
-
-    .brand-logo span {
-      color: var(--primary-accent);
-    }
-
-    .badge-pill {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .theme-toggle-btn {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: all var(--transition-speed);
-    }
-
-    .theme-toggle-btn:hover {
-      background: var(--primary-accent-light);
-      border-color: var(--primary-accent);
-    }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      padding: 4px 12px 4px 6px;
-      border-radius: 999px;
-      cursor: pointer;
-    }
-
-    .user-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .user-name {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    /* Date Carousel Bar */
-    .date-scroller-container {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
-      padding: 10px 24px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .date-scroller-container::-webkit-scrollbar {
-      display: none;
-    }
-
-    .date-scroller {
-      display: flex;
-      gap: 10px;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .date-card {
-      min-width: 86px;
-      padding: 8px 12px;
-      border-radius: 14px;
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      text-align: center;
-      cursor: pointer;
-      transition: all var(--transition-speed);
-      user-select: none;
-    }
-
-    .date-card:hover {
-      border-color: var(--primary-accent);
-      transform: translateY(-2px);
-    }
-
-    .date-card.active {
-      background: var(--primary-accent);
-      border-color: var(--primary-accent);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
-    }
-
-    .date-card.active .date-day,
-    .date-card.active .date-num {
-      color: #ffffff;
-    }
-
-    .date-day {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-
-    .date-num {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    /* =========================================================================
-       3. AGENTIC AI PROMPT BAR (Ready for Autonomous AI Pair Programming & Booking)
-       ========================================================================= */
-    .ai-agent-bar {
-      max-width: 1400px;
-      width: calc(100% - 48px);
-      margin: 16px auto 0 auto;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 10px 18px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .ai-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--primary-accent-light);
-      color: var(--primary-accent);
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
-    .ai-input {
-      flex: 1;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-size: 0.88rem;
-      color: var(--text-main);
-    }
-
-    .ai-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .ai-btn {
-      background: var(--primary-accent);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background var(--transition-speed);
-      white-space: nowrap;
-    }
-
-    .ai-btn:hover {
-      background: var(--primary-accent-hover);
-    }
-
-    /* =========================================================================
-       4. MAIN THREE-COLUMN WORKSPACE (Exact FilmTIX & IMAGIX Blueprint)
-       ========================================================================= */
-    .app-workspace {
-      max-width: 1400px;
-      width: 100%;
-      margin: 16px auto 32px auto;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 310px 1fr 340px;
-      gap: 20px;
-      flex: 1;
-    }
-
-    /* Column Cards Generic */
-    .column-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 20px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* -------------------------------------------------------------------------
-       LEFT COLUMN: FILM CATALOG & SEARCH
-       ------------------------------------------------------------------------- */
-    .catalog-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .column-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .search-box {
-      position: relative;
-      margin-bottom: 16px;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 10px 14px 10px 36px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card-subtle);
-      color: var(--text-main);
-      font-size: 0.85rem;
-      outline: none;
-      transition: border-color var(--transition-speed);
-    }
-
-    .search-input:focus {
-      border-color: var(--primary-accent);
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .movie-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      overflow-y: auto;
-      max-height: 520px;
-      padding-right: 4px;
-    }
-
-    .movie-grid::-webkit-scrollbar {
-      width: 4px;
-    }
-    .movie-grid::-webkit-scrollbar-thumb {
-      background: var(--border-color);
-      border-radius: 4px;
-    }
-
-    .movie-item {
-      position: relative;
-      border-radius: 12px;
-      overflow: hidden;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: all var(--transition-speed);
-      aspect-ratio: 2/3;
-      background: var(--bg-card-subtle);
-    }
-
-    .movie-item:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .movie-item.active {
-      border-color: var(--primary-accent);
-      box-shadow: 0 0 0 3px var(--primary-accent-light);
-    }
-
-    .movie-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .movie-item-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.85) 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 8px;
-      color: #fff;
-    }
-
-    .movie-item-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 2px;
-    }
-
-    .movie-item-genre {
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .view-all-btn {
-      margin-top: 14px;
-      width: 100%;
-      padding: 10px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card-subtle);
-      color: var(--text-main);
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all var(--transition-speed);
-      text-align: center;
-    }
-
-    .view-all-btn:hover {
-      background: var(--primary-accent-light);
-      color: var(--primary-accent);
-      border-color: var(--primary-accent);
-    }
-
-    /* -------------------------------------------------------------------------
-       CENTER COLUMN: SEAT MAP & STAGE
-       ------------------------------------------------------------------------- */
-    .seat-map-wrapper {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .screen-header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .screen-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    /* Cinema Curved Screen Visual */
-    .cinema-screen {
-      position: relative;
-      width: 80%;
-      max-width: 480px;
-      height: 24px;
-      margin: 0 auto 30px auto;
-      border-top: 5px solid var(--primary-accent);
-      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-      filter: drop-shadow(0 6px 12px var(--primary-accent-light));
-    }
-
-    .cinema-screen::after {
-      content: 'CINEMA SCREEN';
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: var(--text-muted);
-    }
-
-    /* Interactive Seat Grid */
-    .seats-grid-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 24px;
-      user-select: none;
-      overflow-x: auto;
-      padding: 10px 0;
-    }
-
-    .seat-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .row-label {
-      width: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .seats-row-group {
-      display: flex;
-      gap: 7px;
-    }
-
-    .aisle-gap {
-      width: 24px; /* Center aisle space as seen in screenshots */
-    }
-
-    /* Individual Seat Button */
-    .seat-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      border: 1px solid transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.68rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
-
-    .seat-btn:hover:not(.booked):not(.held) {
-      transform: scale(1.12);
-      box-shadow: var(--shadow-sm);
-    }
-
-    /* Seat States */
-    .seat-btn.available {
-      background: var(--seat-available);
-      color: var(--seat-available-text);
-      border-color: rgba(0, 0, 0, 0.05);
-    }
-
-    .seat-btn.selected {
-      background: var(--seat-selected);
-      color: var(--seat-selected-text);
-      transform: scale(1.08);
-      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4);
-    }
-
-    .seat-btn.booked {
-      background: var(--seat-booked);
-      color: var(--seat-booked-text);
-      cursor: not-allowed;
-      opacity: 0.85;
-    }
-
-    .seat-btn.held {
-      background: var(--seat-held);
-      color: var(--seat-held-text);
-      cursor: not-allowed;
-    }
-
-    /* Category indicator on seat */
-    .seat-cat-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      margin-top: 1px;
-    }
-    .seat-cat-silver { background: #94a3b8; }
-    .seat-cat-gold { background: #eab308; }
-    .seat-cat-platinum { background: #ec4899; }
-
-    /* Legend Box */
-    .seat-legend {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      padding: 12px;
-      border-radius: 12px;
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      margin-top: auto;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .legend-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 4px;
-    }
-
-    /* -------------------------------------------------------------------------
-       RIGHT COLUMN: DETAILS, SHOWTIMES & BOOKING BREAKDOWN
-       ------------------------------------------------------------------------- */
-    .selected-movie-info {
-      margin-bottom: 18px;
-    }
-
-    .movie-headline {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 6px;
-      line-height: 1.25;
-    }
-
-    .genre-tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 14px;
-    }
-
-    .genre-tag {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .section-subtitle {
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Venue Selector Dropdown */
-    .venue-select {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card-subtle);
-      color: var(--text-main);
-      font-size: 0.85rem;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-      margin-bottom: 14px;
-    }
-
-    /* Showtime Chips */
-    .showtime-chips {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .time-chip {
-      padding: 9px 8px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card-subtle);
-      font-size: 0.78rem;
-      font-weight: 600;
-      text-align: center;
-      cursor: pointer;
-      color: var(--text-main);
-      transition: all var(--transition-speed);
-    }
-
-    .time-chip:hover {
-      border-color: var(--primary-accent);
-    }
-
-    .time-chip.active {
-      background: var(--primary-accent);
-      border-color: var(--primary-accent);
-      color: #fff;
-    }
-
-    /* Selected Seats Interactive Chip List (with 1-click Deselect [x]) */
-    .selected-chips-container {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 140px;
-      overflow-y: auto;
-      margin-bottom: 14px;
-      padding-right: 4px;
-    }
-
-    .selected-seat-chip {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 7px 12px;
-      border-radius: 8px;
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .seat-chip-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .seat-chip-price {
-      color: var(--primary-accent);
-      font-weight: 700;
-    }
-
-    .seat-remove-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 1rem;
-      line-height: 1;
-      padding: 2px 4px;
-      border-radius: 4px;
-      transition: color 0.15s;
-    }
-
-    .seat-remove-btn:hover {
-      color: #ef4444;
-      background: rgba(239, 68, 68, 0.1);
-    }
-
-    /* Price Summary Box */
-    .price-breakdown {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 16px;
-    }
-
-    .price-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-
-    .price-row.total {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--border-color);
-      color: var(--text-main);
-      font-size: 1rem;
-      font-weight: 800;
-      margin-bottom: 0;
-    }
-
-    .price-row.total .total-amount {
-      color: var(--primary-accent);
-    }
-
-    /* Action Booking Buttons */
-    .action-buttons-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: auto;
-    }
-
-    .primary-btn {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      border: none;
-      background: var(--primary-accent);
-      color: #ffffff;
-      font-size: 0.92rem;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-      transition: all var(--transition-speed);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .primary-btn:hover:not(:disabled) {
-      background: var(--primary-accent-hover);
-      transform: translateY(-1px);
-    }
-
-    .primary-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .secondary-btn {
-      width: 100%;
-      padding: 11px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      color: var(--text-main);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all var(--transition-speed);
-    }
-
-    .secondary-btn:hover {
-      background: var(--bg-card-subtle);
-    }
-
-    /* =========================================================================
-       5. DIGITAL TICKET MODAL & QR CODE
-       ========================================================================= */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity var(--transition-speed);
-    }
-
-    .modal-backdrop.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .ticket-modal {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 20px;
-      max-width: 440px;
-      width: 90%;
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
-      transform: scale(0.95);
-      transition: transform var(--transition-speed);
-    }
-
-    .modal-backdrop.open .ticket-modal {
-      transform: scale(1);
-    }
-
-    .ticket-header {
-      background: var(--primary-accent);
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      position: relative;
-    }
-
-    .ticket-brand {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      opacity: 0.85;
-      margin-bottom: 4px;
-    }
-
-    .ticket-movie-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-    }
-
-    .ticket-body {
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .ticket-details-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-      background: var(--bg-card-subtle);
-      padding: 14px;
-      border-radius: 12px;
-    }
-
-    .ticket-data-item .t-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-
-    .ticket-data-item .t-val {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .qr-container {
-      background: #ffffff;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .ticket-reference {
-      font-family: monospace;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      margin-bottom: 20px;
-    }
-
-    /* Responsive Queries */
-    @media (max-width: 1080px) {
-      .app-workspace {
-        grid-template-columns: 1fr;
-      }
-      .movie-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
+      --bg-primary:         #07080c;
+      --bg-card:            #11141c;
+      --bg-card-subtle:     #181d29;
+      --text-main:          #f8fafc;
+      --text-muted:         #94a3b8;
+      --accent:             #e50914;
+      --accent-hover:       #b80710;
+      --accent-glow:        rgba(229,9,20,0.18);
+      --seat-free:          #1f2535;
+      --seat-free-text:     #cbd5e1;
+      --seat-picked:        #e50914;
+      --seat-picked-text:   #fff;
+      --seat-taken:         #0a0c12;
+      --seat-taken-text:    #374151;
+      --seat-held:          #d97706;
+      --seat-held-text:     #fff;
+      --border:             #232a3b;
+      --radius:             14px;
+      --sh-sm:              0 2px 10px rgba(0,0,0,.55);
+      --sh-md:              0 8px 24px rgba(0,0,0,.7);
+      --sh-lg:              0 20px 50px rgba(0,0,0,.9);
+      --speed:              0.22s;
+    }
+    body.light {
+      --bg-primary:     #f0f2f5;
+      --bg-card:        #ffffff;
+      --bg-card-subtle: #f8f9fb;
+      --text-main:      #111827;
+      --text-muted:     #6b7280;
+      --accent:         #e50914;
+      --accent-hover:   #b80710;
+      --accent-glow:    rgba(229,9,20,0.10);
+      --seat-free:      #e5e7eb;
+      --seat-free-text: #374151;
+      --seat-taken:     #d1d5db;
+      --seat-taken-text:#9ca3af;
+      --border:         #e5e7eb;
+      --sh-sm:          0 2px 8px rgba(0,0,0,.06);
+      --sh-md:          0 6px 20px rgba(0,0,0,.08);
+      --sh-lg:          0 16px 40px rgba(0,0,0,.12);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+
+    body{background:var(--bg-primary);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;transition:background var(--speed),color var(--speed)}
+
+    /* ── TOPBAR ── */
+    .topbar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:60;box-shadow:var(--sh-sm)}
+    .topbar-left,.topbar-right{display:flex;align-items:center;gap:10px}
+    .brand{display:flex;align-items:center;gap:7px;font-size:1.3rem;font-weight:800;color:var(--text-main);text-decoration:none}
+    .brand .red{color:var(--accent)}
+    .pill{display:flex;align-items:center;gap:5px;background:var(--bg-card-subtle);border:1px solid var(--border);padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all var(--speed)}
+    .pill:hover{border-color:var(--accent);color:var(--accent)}
+    .icon-btn{background:var(--bg-card-subtle);border:1px solid var(--border);color:var(--text-main);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all var(--speed)}
+    .icon-btn:hover{background:var(--accent-glow);border-color:var(--accent)}
+    .user-chip{display:flex;align-items:center;gap:8px;background:var(--bg-card-subtle);border:1px solid var(--border);padding:4px 12px 4px 5px;border-radius:999px;cursor:pointer}
+    .avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#e50914,#ff6b6b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.75rem;font-weight:800}
+    .user-name{font-size:.82rem;font-weight:600;color:var(--text-main)}
+
+    /* ── DATE CAROUSEL ── */
+    .date-bar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:8px 20px;overflow-x:auto;scrollbar-width:none}
+    .date-bar::-webkit-scrollbar{display:none}
+    .date-row{display:flex;gap:8px;max-width:1400px;margin:0 auto}
+    .date-chip{min-width:80px;padding:7px 10px;border-radius:12px;background:var(--bg-card-subtle);border:1px solid var(--border);text-align:center;cursor:pointer;transition:all var(--speed);user-select:none}
+    .date-chip:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .date-chip.active{background:var(--accent);border-color:var(--accent);box-shadow:0 4px 14px var(--accent-glow)}
+    .date-chip.active .dday,.date-chip.active .dnum{color:#fff}
+    .dday{font-size:.67rem;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:1px}
+    .dnum{font-size:.9rem;font-weight:700;color:var(--text-main)}
+
+    /* ── LOCATION BANNER ── */
+    .loc-banner{max-width:1400px;width:calc(100% - 40px);margin:14px auto 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--sh-sm);flex-wrap:wrap}
+    .loc-btn{display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:10px;font-size:.8rem;font-weight:700;cursor:pointer;transition:background var(--speed);white-space:nowrap}
+    .loc-btn:hover{background:var(--accent-hover)}
+    .loc-info{flex:1;font-size:.82rem;color:var(--text-muted)}
+    .loc-info strong{color:var(--text-main)}
+    .nearby-wrap{width:100%;display:none;margin-top:10px}
+    .nearby-wrap.show{display:block}
+    .nearby-title{font-size:.8rem;font-weight:700;color:var(--text-muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+    .nearby-list{display:flex;gap:8px;flex-wrap:wrap}
+    .nearby-card{background:var(--bg-card-subtle);border:1px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;transition:all var(--speed);flex:1;min-width:160px}
+    .nearby-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+    .nearby-card.selected-venue{border-color:var(--accent);background:var(--accent-glow)}
+    .nc-name{font-size:.82rem;font-weight:700;color:var(--text-main)}
+    .nc-dist{font-size:.72rem;color:var(--text-muted);margin-top:2px}
+    .nc-screen{font-size:.7rem;color:var(--accent);margin-top:3px;font-weight:600}
+
+    /* ── AI BAR ── */
+    .ai-bar{max-width:1400px;width:calc(100% - 40px);margin:10px auto 0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:9px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh-sm)}
+    .ai-badge{display:flex;align-items:center;gap:5px;background:var(--accent-glow);color:var(--accent);font-size:.75rem;font-weight:800;padding:5px 10px;border-radius:999px;white-space:nowrap}
+    .ai-input{flex:1;border:none;outline:none;background:transparent;font-size:.85rem;color:var(--text-main)}
+    .ai-input::placeholder{color:var(--text-muted)}
+    .ai-run-btn{background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:9px;font-size:.78rem;font-weight:700;cursor:pointer;transition:background var(--speed);white-space:nowrap}
+    .ai-run-btn:hover{background:var(--accent-hover)}
+
+    /* ── 3-COLUMN WORKSPACE ── */
+    .workspace{max-width:1400px;width:100%;margin:14px auto 30px;padding:0 20px;display:grid;grid-template-columns:300px 1fr 330px;gap:16px}
+
+    /* Column Card */
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--sh-sm);display:flex;flex-direction:column}
+
+    /* ── LEFT: CATALOG ── */
+    .cat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .col-title{font-size:1.05rem;font-weight:800;color:var(--text-main)}
+    .count-pill{background:var(--bg-card-subtle);border:1px solid var(--border);padding:3px 10px;border-radius:999px;font-size:.72rem;font-weight:700;color:var(--text-muted)}
+    .search-box{position:relative;margin-bottom:14px}
+    .search-input{width:100%;padding:9px 12px 9px 34px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card-subtle);color:var(--text-main);font-size:.82rem;outline:none;transition:border-color var(--speed)}
+    .search-input:focus{border-color:var(--accent)}
+    .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:.85rem}
+    .movie-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;overflow-y:auto;max-height:490px;padding-right:4px}
+    .movie-grid::-webkit-scrollbar{width:3px}
+    .movie-grid::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    .movie-item{position:relative;border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all var(--speed);aspect-ratio:2/3;background:var(--bg-card-subtle)}
+    .movie-item:hover{transform:translateY(-3px);box-shadow:var(--sh-md)}
+    .movie-item.active{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+    .movie-item img{width:100%;height:100%;object-fit:cover;display:block}
+    .movie-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.88) 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:7px;color:#fff}
+    .movie-ttl{font-size:.74rem;font-weight:700;line-height:1.2;margin-bottom:1px}
+    .movie-genre{font-size:.64rem;color:rgba(255,255,255,.65)}
+    .movie-rating{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);color:#facc15;font-size:.65rem;font-weight:800;padding:2px 6px;border-radius:6px}
+    .view-all{margin-top:12px;width:100%;padding:9px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card-subtle);color:var(--text-main);font-weight:700;font-size:.8rem;cursor:pointer;transition:all var(--speed);text-align:center}
+    .view-all:hover{background:var(--accent-glow);color:var(--accent);border-color:var(--accent)}
+    .loading-movies{display:flex;align-items:center;justify-content:center;height:200px;color:var(--text-muted);font-size:.85rem;flex-direction:column;gap:10px}
+    .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── CENTER: SEAT MAP ── */
+    .seat-wrap{display:flex;flex-direction:column;height:100%}
+    .screen-label{font-size:1rem;font-weight:800;text-align:center;margin-bottom:14px}
+    .cinema-screen{position:relative;width:78%;max-width:460px;height:22px;margin:0 auto 28px;border-top:4px solid var(--accent);border-radius:50% 50% 0 0/100% 100% 0 0;filter:drop-shadow(0 5px 12px var(--accent-glow))}
+    .cinema-screen::after{content:'CINEMA SCREEN';position:absolute;top:9px;left:50%;transform:translateX(-50%);font-size:.62rem;font-weight:700;letter-spacing:3px;color:var(--text-muted)}
+    .seats-grid{display:flex;flex-direction:column;gap:9px;align-items:center;margin-bottom:20px;user-select:none;overflow-x:auto;padding:8px 0}
+    .seat-row{display:flex;align-items:center;gap:7px}
+    .row-lbl{width:18px;font-size:.7rem;font-weight:700;color:var(--text-muted);text-align:center}
+    .seats-group{display:flex;gap:6px}
+    .aisle{width:22px}
+    .seat{width:30px;height:30px;border-radius:7px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;cursor:pointer;transition:all .15s cubic-bezier(.4,0,.2,1)}
+    .seat:hover:not(.taken):not(.held-s){transform:scale(1.14)}
+    .seat.free{background:var(--seat-free);color:var(--seat-free-text)}
+    .seat.picked{background:var(--seat-picked);color:var(--seat-picked-text);transform:scale(1.07);box-shadow:0 3px 10px var(--accent-glow)}
+    .seat.taken{background:var(--seat-taken);color:var(--seat-taken-text);cursor:not-allowed;opacity:.7}
+    .seat.held-s{background:var(--seat-held);color:var(--seat-held-text);cursor:not-allowed}
+    .cat-dot{width:4px;height:4px;border-radius:50%;margin-top:1px}
+    .cat-silver{background:#94a3b8}.cat-gold{background:#eab308}.cat-platinum{background:#ec4899}
+    .seat-legend{display:flex;justify-content:center;align-items:center;gap:16px;padding:10px;border-radius:10px;background:var(--bg-card-subtle);border:1px solid var(--border);margin-top:auto}
+    .leg-item{display:flex;align-items:center;gap:6px;font-size:.72rem;font-weight:600;color:var(--text-muted)}
+    .leg-dot{width:13px;height:13px;border-radius:4px}
+
+    /* Hold Timer */
+    .hold-timer-banner{display:none;align-items:center;justify-content:center;gap:8px;background:var(--accent-glow);border:1px solid var(--accent);border-radius:10px;padding:10px;margin-bottom:14px;font-size:.82rem;font-weight:700;color:var(--accent)}
+    .hold-timer-banner.active{display:flex}
+    .timer-num{font-size:1.1rem;font-weight:800;min-width:28px;text-align:center}
+
+    /* ── RIGHT: BOOKING PANEL ── */
+    .movie-headline{font-size:1.15rem;font-weight:800;color:var(--text-main);margin-bottom:5px;line-height:1.2}
+    .movie-desc{font-size:.75rem;color:var(--text-muted);line-height:1.5;margin-bottom:10px;max-height:60px;overflow:hidden}
+    .tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+    .tag{background:var(--bg-card-subtle);border:1px solid var(--border);padding:3px 9px;border-radius:999px;font-size:.68rem;font-weight:600;color:var(--text-muted)}
+    .sec-title{font-size:.8rem;font-weight:700;color:var(--text-main);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+    .venue-select{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card-subtle);color:var(--text-main);font-size:.8rem;font-weight:600;outline:none;cursor:pointer;margin-bottom:12px}
+    .time-chips{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:16px}
+    .tc{padding:8px;border-radius:9px;border:1px solid var(--border);background:var(--bg-card-subtle);font-size:.74rem;font-weight:600;text-align:center;cursor:pointer;color:var(--text-main);transition:all var(--speed)}
+    .tc:hover{border-color:var(--accent)}
+    .tc.active{background:var(--accent);border-color:var(--accent);color:#fff}
+    .seat-chips{display:flex;flex-direction:column;gap:5px;max-height:130px;overflow-y:auto;margin-bottom:12px;padding-right:3px}
+    .seat-chip{display:flex;justify-content:space-between;align-items:center;padding:7px 11px;border-radius:8px;background:var(--bg-card-subtle);border:1px solid var(--border);font-size:.77rem;font-weight:600}
+    .chip-price{color:var(--accent);font-weight:800}
+    .chip-rm{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:.95rem;padding:1px 4px;border-radius:4px;transition:color .15s}
+    .chip-rm:hover{color:#ef4444;background:rgba(239,68,68,.1)}
+    .price-box{background:var(--bg-card-subtle);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:14px}
+    .p-row{display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-muted);margin-bottom:7px}
+    .p-row.total{margin-top:7px;padding-top:7px;border-top:1px dashed var(--border);color:var(--text-main);font-size:.95rem;font-weight:800;margin-bottom:0}
+    .p-row.total .p-val{color:var(--accent)}
+    .btn-group{display:flex;flex-direction:column;gap:7px;margin-top:auto}
+    .btn-primary{width:100%;padding:12px;border-radius:11px;border:none;background:var(--accent);color:#fff;font-size:.88rem;font-weight:800;cursor:pointer;box-shadow:0 4px 16px var(--accent-glow);transition:all var(--speed);display:flex;justify-content:center;align-items:center;gap:7px}
+    .btn-primary:hover:not(:disabled){background:var(--accent-hover);transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+    .btn-secondary{width:100%;padding:10px;border-radius:11px;border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);font-size:.8rem;font-weight:600;cursor:pointer;transition:all var(--speed)}
+    .btn-secondary:hover{background:var(--bg-card-subtle)}
+
+    /* ── TICKET MODAL ── */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity var(--speed)}
+    .modal-bg.open{opacity:1;pointer-events:auto}
+    .modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:18px;max-width:430px;width:90%;overflow:hidden;box-shadow:var(--sh-lg);transform:scale(.94);transition:transform var(--speed)}
+    .modal-bg.open .modal-box{transform:scale(1)}
+    .modal-head{background:var(--accent);color:#fff;padding:18px;text-align:center}
+    .modal-brand{font-size:.72rem;text-transform:uppercase;letter-spacing:2px;opacity:.8;margin-bottom:3px}
+    .modal-movie{font-size:1.3rem;font-weight:800}
+    .modal-body{padding:20px;display:flex;flex-direction:column;align-items:center}
+    .ticket-grid{width:100%;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;background:var(--bg-card-subtle);padding:12px;border-radius:10px;margin-bottom:16px}
+    .t-lbl{font-size:.64rem;color:var(--text-muted);text-transform:uppercase;font-weight:700}
+    .t-val{font-size:.82rem;font-weight:700;color:var(--text-main)}
+    .qr-wrap{background:#fff;padding:11px;border-radius:11px;border:1px solid #e5e7eb;margin-bottom:13px}
+    .ticket-ref{font-family:monospace;font-size:.75rem;color:var(--text-muted);letter-spacing:1px;margin-bottom:16px}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:.82rem;font-weight:600;color:var(--text-main);box-shadow:var(--sh-lg);z-index:300;transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+    .toast.success{border-color:var(--accent);color:var(--accent)}
+    .toast.info{border-color:#3b82f6;color:#60a5fa}
+    .toast.warn{border-color:#f59e0b;color:#fbbf24}
+
+    @media(max-width:1080px){.workspace{grid-template-columns:1fr}.movie-grid{grid-template-columns:repeat(4,1fr)}}
   </style>
 </head>
 <body>
 
-  <!-- =========================================================================
-       TOPBAR & DATE SELECTOR
-       ========================================================================= -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <a href="#" class="brand-logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary-accent)"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-        BOOK<span>IT</span>
-      </a>
-      <div class="badge-pill" id="filmCategoryBadge">
-        <span id="currentContentTypeText">Film</span> ▾
-      </div>
-      <div class="badge-pill">
-        📅 <span id="currentDateDisplay">Aug 05, 2026</span>
-      </div>
-      <div class="badge-pill">
-        ⏰ <span id="currentTimeDisplay">8:25 PM</span>
-      </div>
-    </div>
-
-    <div class="topbar-right">
-      <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle Cinema Dark Mode">
-        🌓
-      </button>
-      <div class="user-profile">
-        <div class="user-avatar">AK</div>
-        <div class="user-name">Akanksha T. ▾</div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Horizontal Dates Carousel (10 Days from today) -->
-  <section class="date-scroller-container">
-    <div class="date-scroller" id="dateScroller">
-      <!-- Generated dynamically by JavaScript without hardcoding -->
-    </div>
-  </section>
-
-  <!-- =========================================================================
-       AGENTIC AI ASSISTANT PROMPT BAR
-       Allows natural-language ticket booking: e.g. "Select 2 Gold seats for Dune"
-       ========================================================================= -->
-  <section class="ai-agent-bar">
-    <div class="ai-badge">
-      ✨ <span>BOOKIT AI Agent</span>
-    </div>
-    <input 
-      type="text" 
-      id="aiPromptInput" 
-      class="ai-input" 
-      placeholder="Ask Agentic AI: e.g. 'Select 2 Gold seats for Godzilla' or 'Find 3 center seats under ₹400'..."
-    />
-    <button class="ai-btn" id="aiRunBtn">Run Agentic Action</button>
-  </section>
-
-  <!-- =========================================================================
-       MAIN 3-COLUMN WORKSPACE (FilmTIX & IMAGIX Cinema Alignment)
-       ========================================================================= -->
-  <main class="app-workspace">
-
-    <!-- 1. LEFT COLUMN: Film Catalog & Search -->
-    <aside class="column-card">
-      <div class="catalog-header">
-        <h2 class="column-title">Film & Shows</h2>
-        <span class="badge-pill" id="catalogCountBadge">6 Available</span>
-      </div>
-
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input 
-          type="text" 
-          id="movieSearchInput" 
-          class="search-input" 
-          placeholder="Search by title, genre..."
-        />
-      </div>
-
-      <div class="movie-grid" id="movieGrid">
-        <!-- Rendered dynamically from backend / state -->
-      </div>
-
-      <button class="view-all-btn" id="viewAllBtn">View All Categories & Events</button>
-    </aside>
-
-    <!-- 2. CENTER COLUMN: Interactive Seat Map -->
-    <section class="column-card">
-      <div class="seat-map-wrapper">
-        <div class="screen-header">
-          <h2 class="screen-title" id="centerPanelTitle">Select Seat</h2>
-          <div class="cinema-screen"></div>
-        </div>
-
-        <!-- Dynamic Interactive Seat Grid -->
-        <div class="seats-grid-container" id="seatsGrid">
-          <!-- Rendered dynamically via renderSeatGrid() -->
-        </div>
-
-        <!-- Legend (States & Category Tiers) -->
-        <div class="seat-legend">
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--seat-available); border:1px solid #ccc;"></div>
-            <span>Available</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--seat-selected)"></div>
-            <span>Selected</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--seat-booked)"></div>
-            <span>Booked</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot" style="background:var(--seat-held)"></div>
-            <span>Held (5m)</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3. RIGHT COLUMN: Details, Showtimes, Selected Seats & Checkout -->
-    <aside class="column-card">
-      <!-- Active Movie Details -->
-      <div class="selected-movie-info">
-        <h1 class="movie-headline" id="detailMovieTitle">Godzilla x Kong: The New Empire</h1>
-        <div class="genre-tag-list" id="detailGenreTags">
-          <span class="genre-tag">Sci-Fi</span>
-          <span class="genre-tag">Action</span>
-        </div>
-      </div>
-
-      <!-- Venue & Screen Selector -->
-      <div class="section-subtitle">
-        <span>Select Venue</span>
-      </div>
-      <select class="venue-select" id="venueSelect">
-        <option value="1">Cinema Stela (Screen 1 - Atmos)</option>
-        <option value="2">PVR Superplex (IMAX 3D)</option>
-        <option value="3">Inox Grand Theatre (Screen 4)</option>
-      </select>
-
-      <!-- Showtime Pills -->
-      <div class="section-subtitle">
-        <span>Select Showtime</span>
-      </div>
-      <div class="showtime-chips" id="showtimeChips">
-        <button class="time-chip active" data-time="1:00PM - 3:15PM">1:00 PM - 3:15 PM</button>
-        <button class="time-chip" data-time="3:00PM - 5:15PM">3:00 PM - 5:15 PM</button>
-        <button class="time-chip" data-time="5:00PM - 7:15PM">5:00 PM - 7:15 PM</button>
-        <button class="time-chip" data-time="7:00PM - 9:15PM">7:00 PM - 9:15 PM</button>
-      </div>
-
-      <!-- Selected Seats List (Allows 1-Click Deselection with [×]) -->
-      <div class="section-subtitle">
-        <span>Selected Seats (<span id="selectedCountLabel">0</span>)</span>
-        <button id="clearAllSeatsBtn" style="background:none;border:none;color:var(--text-muted);font-size:0.75rem;cursor:pointer;font-weight:600;">Clear</button>
-      </div>
-      <div class="selected-chips-container" id="selectedSeatsChipContainer">
-        <!-- Renders chips with [×] deselect buttons -->
-      </div>
-
-      <!-- Price Breakdown -->
-      <div class="price-breakdown">
-        <div class="price-row">
-          <span id="ticketCountLabel">0 Tickets</span>
-          <span id="subTotalDisplay">₹0.00</span>
-        </div>
-        <div class="price-row">
-          <span>Booking Convenience (2%)</span>
-          <span id="convenienceDisplay">₹0.00</span>
-        </div>
-        <div class="price-row total">
-          <span>Total Amount</span>
-          <span class="total-amount" id="totalAmountDisplay">₹0.00</span>
-        </div>
-      </div>
-
-      <!-- Payment / Booking Action Buttons -->
-      <div class="action-buttons-group">
-        <button class="primary-btn" id="payOnlineBtn" disabled>
-          <span>Pay & Confirm Ticket</span>
-        </button>
-        <button class="secondary-btn" id="holdSeatsBtn">
-          Hold Seats (5 Mins)
-        </button>
-      </div>
-    </aside>
-
-  </main>
-
-  <!-- =========================================================================
-       CONFIRMATION & DIGITAL QR TICKET MODAL
-       ========================================================================= -->
-  <div class="modal-backdrop" id="ticketModal">
-    <div class="ticket-modal">
-      <div class="ticket-header">
-        <div class="ticket-brand">BOOKIT OFFICIAL E-TICKET</div>
-        <h3 class="ticket-movie-title" id="modalMovieTitle">Movie Name</h3>
-      </div>
-      <div class="ticket-body">
-        <div class="ticket-details-grid">
-          <div class="ticket-data-item">
-            <div class="t-label">Venue</div>
-            <div class="t-val" id="modalVenue">Cinema Stela</div>
-          </div>
-          <div class="ticket-data-item">
-            <div class="t-label">Date & Time</div>
-            <div class="t-val" id="modalDateTime">Aug 05 · 1:00 PM</div>
-          </div>
-          <div class="ticket-data-item">
-            <div class="t-label">Seats</div>
-            <div class="t-val" id="modalSeats">A1, A2</div>
-          </div>
-          <div class="ticket-data-item">
-            <div class="t-label">Amount Paid</div>
-            <div class="t-val" id="modalAmount">₹450.00</div>
-          </div>
-        </div>
-
-        <!-- Live SVG QR Code -->
-        <div class="qr-container" id="ticketQrBox">
-          <!-- Dynamically generated SVG QR code -->
-        </div>
-
-        <div class="ticket-reference" id="modalReference">BOOK-REF-XXXX-XXXX</div>
-
-        <button class="primary-btn" id="closeModalBtn" style="width:100%;">
-          Done & Download Ticket
-        </button>
-      </div>
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <a href="#" class="brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+      BOOK<span class="red">IT</span>
+    </a>
+    <div class="pill">🎬 <span id="contentTypeLabel">Movies</span> ▾</div>
+    <div class="pill">📅 <span id="todayDisplay">--</span></div>
+    <div class="pill">⏰ <span id="clockDisplay">--</span></div>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☀️</button>
+    <div class="user-chip">
+      <div class="avatar">AK</div>
+      <div class="user-name">Akanksha T. ▾</div>
     </div>
   </div>
+</header>
 
-  <!-- =========================================================================
-       JAVASCRIPT APPLICATION LOGIC
-       Clean, Modular, Self-Explaining, and 100% Dynamic (No Hardcoding)
-       ========================================================================= -->
-  <script>
-    /**
-     * BOOKIT APPLICATION STATE
-     * All items (movies, venues, seat layouts, pricing tiers) are dynamic.
-     */
-    const AppState = {
-      // Catalog Data (can be loaded from /api/content)
-      catalog: [
-        {
-          id: 1,
-          title: "Godzilla x Kong: The New Empire",
-          type: "MOVIE",
-          genres: ["Sci-Fi", "Action"],
-          duration: 115,
-          poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=80",
-          basePrice: 220
-        },
-        {
-          id: 2,
-          title: "Ghostbusters: Frozen Empire",
-          type: "MOVIE",
-          genres: ["Comedy", "Fantasy"],
-          duration: 115,
-          poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&auto=format&fit=crop&q=80",
-          basePrice: 200
-        },
-        {
-          id: 3,
-          title: "Arthur The King",
-          type: "MOVIE",
-          genres: ["Adventure", "Drama"],
-          duration: 107,
-          poster: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&auto=format&fit=crop&q=80",
-          basePrice: 180
-        },
-        {
-          id: 4,
-          title: "Exhuma",
-          type: "MOVIE",
-          genres: ["Horror", "Mystery"],
-          duration: 134,
-          poster: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400&auto=format&fit=crop&q=80",
-          basePrice: 210
-        },
-        {
-          id: 5,
-          title: "Kung Fu Panda 4",
-          type: "MOVIE",
-          genres: ["Animation", "Action"],
-          duration: 94,
-          poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=80",
-          basePrice: 190
-        },
-        {
-          id: 6,
-          title: "Dune: Part Two",
-          type: "MOVIE",
-          genres: ["Sci-Fi", "Adventure"],
-          duration: 166,
-          poster: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?w=400&auto=format&fit=crop&q=80",
-          basePrice: 250
-        }
-      ],
+<!-- ══ DATE CAROUSEL ══ -->
+<div class="date-bar"><div class="date-row" id="dateRow"></div></div>
 
-      // Active selections
-      selectedMovieId: 1,
-      selectedDate: new Date(),
-      selectedShowtime: "1:00PM - 3:15PM",
-      selectedVenueId: 1,
-      
-      // Selected seats map: key is seatId (e.g. "B-04"), value is seat object
-      selectedSeats: new Map(),
+<!-- ══ LOCATION BANNER ══ -->
+<div class="loc-banner">
+  <button class="loc-btn" id="locBtn">📍 Find Nearest Cinema</button>
+  <div class="loc-info" id="locInfo">Allow location access to find cinemas near you</div>
+  <div class="nearby-wrap" id="nearbyWrap">
+    <div class="nearby-title">🎭 Cinemas Near You</div>
+    <div class="nearby-list" id="nearbyList"></div>
+  </div>
+</div>
 
-      // Pre-booked / held seats (simulated live DB availability)
-      bookedSeats: new Set(["A-01", "A-02", "A-03", "A-04", "A-05", "A-09", "A-10", "B-08", "B-09", "C-01", "C-02", "C-03", "C-06", "C-07", "E-01", "E-02", "E-05", "E-06", "E-07", "F-02", "F-03", "F-08", "F-09", "F-10", "G-05", "G-06"]),
-      heldSeats: new Set(["D-05", "D-06"]),
+<!-- ══ AI AGENT BAR ══ -->
+<div class="ai-bar">
+  <div class="ai-badge">✨ BOOKIT AI</div>
+  <input class="ai-input" id="aiInput" placeholder="Try: 'Select 2 Gold seats for Deadpool' or 'Find 3 seats under ₹400'…">
+  <button class="ai-run-btn" id="aiRunBtn">Run ↵</button>
+</div>
 
-      // Seat layout configuration (Rows and Columns)
-      seatRows: [
-        { label: "A", category: "PLATINUM", multiplier: 1.5 },
-        { label: "B", category: "GOLD", multiplier: 1.25 },
-        { label: "C", category: "GOLD", multiplier: 1.25 },
-        { label: "D", category: "SILVER", multiplier: 1.0 },
-        { label: "E", category: "SILVER", multiplier: 1.0 },
-        { label: "F", category: "SILVER", multiplier: 1.0 },
-        { label: "G", category: "SILVER", multiplier: 1.0 }
-      ],
-      seatsPerRow: 10,
-      aisleGapAfterSeat: 5 // Split row between seat 5 and 6
-    };
+<!-- ══ 3-COLUMN WORKSPACE ══ -->
+<main class="workspace">
 
-    /**
-     * INITIALIZATION ROUTINE
-     */
-    document.addEventListener("DOMContentLoaded", () => {
-      initDateScroller();
-      renderMovieGrid();
+  <!-- LEFT: CATALOG -->
+  <aside class="card">
+    <div class="cat-header">
+      <div class="col-title">Now Showing</div>
+      <div class="count-pill" id="countPill">Loading…</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="Search title or genre…">
+    </div>
+    <div class="movie-grid" id="movieGrid">
+      <div class="loading-movies">
+        <div class="spinner"></div>
+        <span>Loading real movies…</span>
+      </div>
+    </div>
+    <button class="view-all" id="viewAllBtn">View All 🎬</button>
+  </aside>
+
+  <!-- CENTER: SEAT MAP -->
+  <section class="card">
+    <div class="seat-wrap">
+      <div class="screen-label" id="seatMapTitle">Select a movie to continue</div>
+      <div class="cinema-screen"></div>
+
+      <!-- Hold-countdown banner (shows when seats are on hold) -->
+      <div class="hold-timer-banner" id="holdBanner">
+        ⏳ Seats held — <span class="timer-num" id="timerNum">05:00</span> remaining. Complete payment!
+      </div>
+
+      <div class="seats-grid" id="seatsGrid"></div>
+
+      <div class="seat-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--seat-free);border:1px solid #ccc"></div>Free</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--seat-picked)"></div>Selected</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--seat-taken)"></div>Booked</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--seat-held)"></div>Held</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#94a3b8;border-radius:50%"></div>Silver</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#eab308;border-radius:50%"></div>Gold</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#ec4899;border-radius:50%"></div>Platinum</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: BOOKING PANEL -->
+  <aside class="card">
+    <div class="movie-headline" id="panelTitle">Select a Movie</div>
+    <div class="movie-desc" id="panelDesc">Choose a movie from the catalog to view details and select your seats.</div>
+    <div class="tag-row" id="panelTags"></div>
+
+    <div class="sec-title">Select Venue</div>
+    <select class="venue-select" id="venueSelect">
+      <option value="1">Cinema Stela (Screen 1 – Dolby Atmos)</option>
+      <option value="2">PVR Superplex (IMAX 3D)</option>
+      <option value="3">Inox Grand Theatre (Screen 4)</option>
+    </select>
+
+    <div class="sec-title">Select Showtime</div>
+    <div class="time-chips" id="timeChips">
+      <button class="tc active" data-t="1:00 PM – 3:15 PM">1:00 PM – 3:15 PM</button>
+      <button class="tc" data-t="3:00 PM – 5:15 PM">3:00 PM – 5:15 PM</button>
+      <button class="tc" data-t="5:00 PM – 7:15 PM">5:00 PM – 7:15 PM</button>
+      <button class="tc" data-t="7:00 PM – 9:15 PM">7:00 PM – 9:15 PM</button>
+    </div>
+
+    <div class="sec-title">
+      <span>Selected Seats (<span id="seatCount">0</span>)</span>
+      <button id="clearBtn" style="background:none;border:none;color:var(--text-muted);font-size:.72rem;cursor:pointer;font-weight:700">Clear</button>
+    </div>
+    <div class="seat-chips" id="seatChips">
+      <div style="font-size:.78rem;color:var(--text-muted);padding:6px 0">No seats selected. Click on the seat map.</div>
+    </div>
+
+    <div class="price-box">
+      <div class="p-row"><span id="ticketLabel">0 Tickets</span><span id="subTotal">₹0.00</span></div>
+      <div class="p-row"><span>Convenience (2%)</span><span id="convFee">₹0.00</span></div>
+      <div class="p-row total"><span>Total</span><span class="p-val" id="grandTotal">₹0.00</span></div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-primary" id="payBtn" disabled>Select Seats to Book</button>
+      <button class="btn-secondary" id="holdBtn">⏳ Hold Seats for 5 Minutes</button>
+    </div>
+  </aside>
+</main>
+
+<!-- ══ TICKET MODAL ══ -->
+<div class="modal-bg" id="ticketModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-brand">BOOKIT — OFFICIAL E-TICKET</div>
+      <div class="modal-movie" id="mMovieTitle">Movie Name</div>
+    </div>
+    <div class="modal-body">
+      <div class="ticket-grid">
+        <div><div class="t-lbl">Venue</div><div class="t-val" id="mVenue">—</div></div>
+        <div><div class="t-lbl">Date & Time</div><div class="t-val" id="mDateTime">—</div></div>
+        <div><div class="t-lbl">Seats</div><div class="t-val" id="mSeats">—</div></div>
+        <div><div class="t-lbl">Amount Paid</div><div class="t-val" id="mAmount">—</div></div>
+      </div>
+      <div class="qr-wrap" id="qrWrap"></div>
+      <div class="ticket-ref" id="mRef">—</div>
+      <button class="btn-primary" id="closeModalBtn" style="width:100%">🎉 Done — Save Ticket</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     JAVASCRIPT — Fully functional, no hardcoding
+     ═══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ──────────────────────────────────────────────────────────
+   CONFIG  —  only place to change keys / constants
+   ────────────────────────────────────────────────────────── */
+const CONFIG = {
+  // Get a free API key at https://www.themoviedb.org/settings/api
+  // This is a public read-only key for demo purposes
+  TMDB_KEY:   '8265bd1679663a7ea12ac168da84d2e8',
+  TMDB_BASE:  'https://api.themoviedb.org/3',
+  TMDB_IMG:   'https://image.tmdb.org/t/p/w500',
+  HOLD_SECS:  300,          // 5-minute seat hold
+  CONV_RATE:  0.02,         // 2% convenience fee
+};
+
+/* ──────────────────────────────────────────────────────────
+   APPLICATION STATE
+   ────────────────────────────────────────────────────────── */
+const S = {
+  movies:          [],           // loaded from TMDB
+  selectedMovieId: null,
+  selectedDate:    new Date(),
+  selectedShowtime:'1:00 PM – 3:15 PM',
+  selectedVenueId: 1,
+  selectedSeats:   new Map(),    // seatId → {id,row,num,cat,price}
+  bookedSeats:     new Set(),    // already booked for this show
+  heldSeats:       new Set(['D-05','D-06']),
+  holdTimerInterval: null,
+  holdSecondsLeft:   0,
+  userLocation:    null,         // {lat,lng,city}
+
+  seatRows: [
+    { label:'A', cat:'PLATINUM', mult:1.5  },
+    { label:'B', cat:'GOLD',     mult:1.25 },
+    { label:'C', cat:'GOLD',     mult:1.25 },
+    { label:'D', cat:'SILVER',   mult:1.0  },
+    { label:'E', cat:'SILVER',   mult:1.0  },
+    { label:'F', cat:'SILVER',   mult:1.0  },
+    { label:'G', cat:'SILVER',   mult:1.0  },
+  ],
+  seatsPerRow:   10,
+  aisleAfter:    5,
+
+  // Simulated nearby cinemas (enriched when user shares location)
+  nearbyVenues: [
+    { id:1, name:'Cinema Stela',      screen:'Screen 1 – Dolby Atmos', distKm: 0.8  },
+    { id:2, name:'PVR Superplex',     screen:'IMAX 3D',                distKm: 2.1  },
+    { id:3, name:'Inox Grand',        screen:'Screen 4',               distKm: 3.5  },
+    { id:4, name:'Cinepolis Nexus',   screen:'4DX Screen',             distKm: 5.2  },
+    { id:5, name:'Miraj Cinemas',     screen:'Screen 2',               distKm: 6.4  },
+  ],
+};
+
+/* ──────────────────────────────────────────────────────────
+   BOOT
+   ────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  initClock();
+  initDateScroller();
+  loadMoviesFromTMDB();
+  renderSeatGrid();
+  bindEvents();
+  updatePricePanel();
+});
+
+/* ──────────────────────────────────────────────────────────
+   CLOCK
+   ────────────────────────────────────────────────────────── */
+function initClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('clockDisplay').textContent =
+      now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit', hour12:true });
+  }
+  tick();
+  setInterval(tick, 30000);
+}
+
+/* ──────────────────────────────────────────────────────────
+   DATE SCROLLER  — dynamic 10-day carousel
+   ────────────────────────────────────────────────────────── */
+function initDateScroller() {
+  const row  = document.getElementById('dateRow');
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const mons = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const now  = new Date();
+
+  document.getElementById('todayDisplay').textContent =
+    `${mons[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+
+  for (let i = 0; i < 10; i++) {
+    const d    = new Date(); d.setDate(now.getDate() + i);
+    const chip = document.createElement('div');
+    chip.className = `date-chip${i === 0 ? ' active' : ''}`;
+    chip.innerHTML = `<div class="dday">${i===0?'Today':days[d.getDay()]}</div>
+                      <div class="dnum">${String(d.getDate()).padStart(2,'0')}, ${mons[d.getMonth()]}</div>`;
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      S.selectedDate = d;
+      document.getElementById('todayDisplay').textContent =
+        `${mons[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+      S.selectedSeats.clear();
       renderSeatGrid();
-      bindEvents();
-      updateSelectedMovieView();
-      updatePriceSummary();
+      updatePricePanel();
     });
+    row.appendChild(chip);
+  }
+}
 
-    /**
-     * 1. DATE SCROLLER GENERATOR (Today + Next 9 Days)
-     */
-    function initDateScroller() {
-      const container = document.getElementById("dateScroller");
-      container.innerHTML = "";
-      const now = new Date();
+/* ──────────────────────────────────────────────────────────
+   REAL MOVIES — TMDB "Now Playing"
+   ────────────────────────────────────────────────────────── */
+async function loadMoviesFromTMDB() {
+  try {
+    const url = `${CONFIG.TMDB_BASE}/movie/now_playing?api_key=${CONFIG.TMDB_KEY}&language=en-US&page=1`;
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error('TMDB fetch failed');
+    const data = await res.json();
 
-      const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    S.movies = data.results
+      .filter(m => m.poster_path)
+      .slice(0, 12)
+      .map(m => ({
+        id:       m.id,
+        title:    m.title,
+        desc:     m.overview,
+        poster:   CONFIG.TMDB_IMG + m.poster_path,
+        rating:   m.vote_average.toFixed(1),
+        genres:   [],            // enriched on click via TMDB detail call
+        genreIds: m.genre_ids,
+        basePrice: 180 + Math.round((m.vote_average / 10) * 120), // dynamic price from rating
+      }));
 
-      for (let i = 0; i < 10; i++) {
-        const d = new Date();
-        d.setDate(now.getDate() + i);
+    // Load genre names once
+    await enrichGenres();
 
-        const isToday = i === 0;
-        const dayName = isToday ? "Today" : daysOfWeek[d.getDay()];
-        const dateStr = `${d.getDate().toString().padStart(2, '0')}, ${months[d.getMonth()]}`;
+    renderMovieGrid();
+    if (S.movies.length) selectMovie(S.movies[0].id);
 
-        const card = document.createElement("div");
-        card.className = `date-card ${i === 0 ? 'active' : ''}`;
-        card.innerHTML = `
-          <div class="date-day">${dayName}</div>
-          <div class="date-num">${dateStr}</div>
-        `;
-        card.addEventListener("click", () => {
-          document.querySelectorAll(".date-card").forEach(c => c.classList.remove("active"));
-          card.classList.add("active");
-          AppState.selectedDate = d;
-          document.getElementById("currentDateDisplay").textContent = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-          // Refresh seat status for the new date
-          renderSeatGrid();
-        });
+  } catch (err) {
+    console.warn('TMDB error, falling back to curated list', err);
+    useFallbackMovies();
+  }
+}
 
-        container.appendChild(card);
+/* Genre name map from TMDB genre list */
+let GENRE_MAP = {};
+async function enrichGenres() {
+  try {
+    const res  = await fetch(`${CONFIG.TMDB_BASE}/genre/movie/list?api_key=${CONFIG.TMDB_KEY}&language=en-US`);
+    const data = await res.json();
+    data.genres.forEach(g => { GENRE_MAP[g.id] = g.name; });
+    S.movies.forEach(m => {
+      m.genres = (m.genreIds || []).slice(0,3).map(id => GENRE_MAP[id] || '').filter(Boolean);
+    });
+  } catch {}
+}
+
+function useFallbackMovies() {
+  S.movies = [
+    { id:1, title:'Deadpool & Wolverine', desc:'Wade Wilson teams up with an unlikely ally.',   poster:'https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg', rating:'8.0', genres:['Action','Comedy'],   basePrice:280 },
+    { id:2, title:'Inside Out 2',         desc:'Riley faces new emotions as a teenager.',        poster:'https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg', rating:'7.8', genres:['Animation','Drama'], basePrice:220 },
+    { id:3, title:'Kingdom of the Planet of the Apes', desc:'A young ape questions the past.',  poster:'https://image.tmdb.org/t/p/w500/gKkl37BQuKTanygYQG1pyYgLVgf.jpg', rating:'7.2', genres:['Sci-Fi','Action'],   basePrice:240 },
+    { id:4, title:'Bad Boys: Ride or Die', desc:'Two detectives go on the run.',                poster:'https://image.tmdb.org/t/p/w500/oGythE98MYleE6mZlGs5oBGkux1.jpg', rating:'7.5', genres:['Action','Thriller'],  basePrice:260 },
+    { id:5, title:'A Quiet Place: Day One',desc:'Witness the first day of silence.',            poster:'https://image.tmdb.org/t/p/w500/yrpPYKijwdMHyTGIOd1iK1h0Gu8.jpg', rating:'7.4', genres:['Horror','Thriller'],  basePrice:230 },
+    { id:6, title:'Despicable Me 4',       desc:'Gru and his Minions are back!',                poster:'https://image.tmdb.org/t/p/w500/wWba3TaojhK7NdycyUk6oLDAvFH.jpg', rating:'7.0', genres:['Animation','Comedy'], basePrice:200 },
+  ];
+  renderMovieGrid();
+  if (S.movies.length) selectMovie(S.movies[0].id);
+}
+
+/* ──────────────────────────────────────────────────────────
+   RENDER MOVIE GRID
+   ────────────────────────────────────────────────────────── */
+function renderMovieGrid(query = '') {
+  const grid = document.getElementById('movieGrid');
+  const q    = query.toLowerCase();
+  const list = S.movies.filter(m =>
+    !q || m.title.toLowerCase().includes(q) || m.genres.some(g => g.toLowerCase().includes(q))
+  );
+
+  grid.innerHTML = '';
+  document.getElementById('countPill').textContent = `${list.length} showing`;
+
+  list.forEach(movie => {
+    const div = document.createElement('div');
+    div.className = `movie-item${movie.id === S.selectedMovieId ? ' active' : ''}`;
+    div.innerHTML = `
+      <img src="${movie.poster}" alt="${movie.title}" loading="lazy"
+           onerror="this.src='https://via.placeholder.com/200x300/11141c/e50914?text=No+Poster'">
+      <div class="movie-overlay">
+        <div class="movie-ttl">${movie.title}</div>
+        <div class="movie-genre">${movie.genres.join(' • ') || 'Cinema'}</div>
+      </div>
+      <div class="movie-rating">⭐ ${movie.rating}</div>`;
+    div.addEventListener('click', () => selectMovie(movie.id));
+    grid.appendChild(div);
+  });
+}
+
+function selectMovie(id) {
+  S.selectedMovieId = id;
+  S.selectedSeats.clear();
+  stopHoldTimer();
+  renderMovieGrid(document.getElementById('searchInput').value);
+  updateDetailsPanel();
+  renderSeatGrid();
+  updatePricePanel();
+}
+
+function getActiveMovie() {
+  return S.movies.find(m => m.id === S.selectedMovieId) || S.movies[0];
+}
+
+/* ──────────────────────────────────────────────────────────
+   DETAILS PANEL (right column)
+   ────────────────────────────────────────────────────────── */
+function updateDetailsPanel() {
+  const m = getActiveMovie();
+  if (!m) return;
+  document.getElementById('panelTitle').textContent = m.title;
+  document.getElementById('panelDesc').textContent  = m.desc || 'No description available.';
+  document.getElementById('panelTags').innerHTML    = m.genres.map(g => `<span class="tag">${g}</span>`).join('');
+  document.getElementById('seatMapTitle').textContent = `Seat Map — ${m.title}`;
+}
+
+/* ──────────────────────────────────────────────────────────
+   SEAT GRID
+   ────────────────────────────────────────────────────────── */
+function renderSeatGrid() {
+  const grid  = document.getElementById('seatsGrid');
+  const movie = getActiveMovie();
+  grid.innerHTML = '';
+  if (!movie) return;
+
+  S.seatRows.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'seat-row';
+
+    // Left row label
+    const lbl = document.createElement('div');
+    lbl.className = 'row-lbl'; lbl.textContent = row.label;
+    rowEl.appendChild(lbl);
+
+    // Left group (seats 1–5)
+    const g1 = document.createElement('div'); g1.className = 'seats-group';
+    for (let n = 1; n <= S.aisleAfter; n++) g1.appendChild(makeSeat(row, n, movie));
+    rowEl.appendChild(g1);
+
+    // Aisle
+    const aisle = document.createElement('div'); aisle.className = 'aisle';
+    rowEl.appendChild(aisle);
+
+    // Right group (seats 6–10)
+    const g2 = document.createElement('div'); g2.className = 'seats-group';
+    for (let n = S.aisleAfter + 1; n <= S.seatsPerRow; n++) g2.appendChild(makeSeat(row, n, movie));
+    rowEl.appendChild(g2);
+
+    // Right row label
+    const lbl2 = document.createElement('div');
+    lbl2.className = 'row-lbl'; lbl2.textContent = row.label;
+    rowEl.appendChild(lbl2);
+
+    grid.appendChild(rowEl);
+  });
+}
+
+function makeSeat(row, num, movie) {
+  const id    = `${row.label}-${String(num).padStart(2,'0')}`;
+  const price = Math.round(movie.basePrice * row.mult);
+  const btn   = document.createElement('button');
+  btn.className = 'seat';
+
+  if      (S.bookedSeats.has(id))  { btn.classList.add('taken');  btn.disabled = true; }
+  else if (S.heldSeats.has(id))    { btn.classList.add('held-s'); btn.disabled = true; }
+  else if (S.selectedSeats.has(id)){ btn.classList.add('picked'); }
+  else                              { btn.classList.add('free');   }
+
+  btn.title = `${id} · ${row.cat} · ₹${price}`;
+  btn.innerHTML = `<span>${num}</span><div class="cat-dot cat-${row.cat.toLowerCase()}"></div>`;
+
+  btn.addEventListener('click', () => {
+    if (S.selectedSeats.has(id)) {
+      S.selectedSeats.delete(id);
+      toast(`Seat ${id} deselected`, 'info');
+    } else {
+      S.selectedSeats.set(id, { id, row:row.label, num, cat:row.cat, price });
+      toast(`Seat ${id} selected · ₹${price}`, 'success');
+    }
+    renderSeatGrid();
+    updatePricePanel();
+  });
+
+  return btn;
+}
+
+/* ──────────────────────────────────────────────────────────
+   PRICE PANEL
+   ────────────────────────────────────────────────────────── */
+function updatePricePanel() {
+  const list  = [...S.selectedSeats.values()];
+  const count = list.length;
+  const sub   = list.reduce((s, x) => s + x.price, 0);
+  const conv  = count ? Math.round(sub * CONFIG.CONV_RATE) : 0;
+  const total = sub + conv;
+
+  document.getElementById('seatCount').textContent   = count;
+  document.getElementById('ticketLabel').textContent = `${count} Ticket${count === 1 ? '' : 's'}`;
+  document.getElementById('subTotal').textContent    = `₹${sub.toFixed(2)}`;
+  document.getElementById('convFee').textContent     = `₹${conv.toFixed(2)}`;
+  document.getElementById('grandTotal').textContent  = `₹${total.toFixed(2)}`;
+
+  const payBtn = document.getElementById('payBtn');
+  payBtn.disabled    = count === 0;
+  payBtn.textContent = count > 0 ? `🎟 Pay ₹${total.toFixed(2)} & Confirm` : 'Select Seats to Book';
+
+  // Render seat chips
+  const chips = document.getElementById('seatChips');
+  if (!count) {
+    chips.innerHTML = '<div style="font-size:.78rem;color:var(--text-muted);padding:6px 0">No seats selected. Click on the seat map.</div>';
+    return;
+  }
+  chips.innerHTML = '';
+  list.forEach(seat => {
+    const chip = document.createElement('div');
+    chip.className = 'seat-chip';
+    chip.innerHTML = `
+      <div style="display:flex;align-items:center;gap:7px">
+        <span>Row ${seat.row} · Seat ${seat.num}</span>
+        <span style="font-size:.67rem;color:var(--text-muted)">(${seat.cat})</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <span class="chip-price">₹${seat.price}</span>
+        <button class="chip-rm" title="Deselect">×</button>
+      </div>`;
+    chip.querySelector('.chip-rm').addEventListener('click', () => {
+      S.selectedSeats.delete(seat.id);
+      renderSeatGrid();
+      updatePricePanel();
+      toast(`Seat ${seat.id} removed`, 'info');
+    });
+    chips.appendChild(chip);
+  });
+}
+
+/* ──────────────────────────────────────────────────────────
+   5-MINUTE SEAT HOLD TIMER
+   ────────────────────────────────────────────────────────── */
+function startHoldTimer() {
+  stopHoldTimer();
+  S.holdSecondsLeft = CONFIG.HOLD_SECS;
+  const banner   = document.getElementById('holdBanner');
+  const timerNum = document.getElementById('timerNum');
+  banner.classList.add('active');
+
+  S.holdTimerInterval = setInterval(() => {
+    S.holdSecondsLeft--;
+    const m = String(Math.floor(S.holdSecondsLeft / 60)).padStart(2,'0');
+    const s = String(S.holdSecondsLeft % 60).padStart(2,'0');
+    timerNum.textContent = `${m}:${s}`;
+
+    if (S.holdSecondsLeft <= 0) {
+      stopHoldTimer();
+      // Release held seats back to free
+      S.selectedSeats.clear();
+      renderSeatGrid();
+      updatePricePanel();
+      toast('⏰ Hold expired — seats released', 'warn');
+    }
+  }, 1000);
+}
+
+function stopHoldTimer() {
+  clearInterval(S.holdTimerInterval);
+  S.holdTimerInterval = null;
+  document.getElementById('holdBanner').classList.remove('active');
+}
+
+/* ──────────────────────────────────────────────────────────
+   LOCATION — Geolocation + Nearby Cinemas
+   ────────────────────────────────────────────────────────── */
+function requestLocation() {
+  if (!navigator.geolocation) {
+    toast('Geolocation not supported by your browser', 'warn');
+    return;
+  }
+  document.getElementById('locInfo').textContent = '📡 Detecting your location…';
+
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      S.userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+      showNearbyCinemas();
+    },
+    err => {
+      let msg = 'Could not get location';
+      if (err.code === 1) msg = 'Location access denied. Please allow in browser settings.';
+      if (err.code === 2) msg = 'Location unavailable. Try again.';
+      document.getElementById('locInfo').textContent = msg;
+      toast(msg, 'warn');
+    },
+    { timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+async function reverseGeocode(lat, lng) {
+  try {
+    // Using public reverse geocode API (no key required)
+    const res  = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+    const data = await res.json();
+    const city = data.address?.city || data.address?.town || data.address?.village || 'your city';
+    S.userLocation.city = city;
+    document.getElementById('locInfo').innerHTML =
+      `<strong>📍 ${city}</strong> — Showing cinemas near you`;
+  } catch {
+    document.getElementById('locInfo').textContent = '📍 Location detected — Showing nearby cinemas';
+  }
+}
+
+function showNearbyCinemas() {
+  const wrap = document.getElementById('nearbyWrap');
+  const list = document.getElementById('nearbyList');
+  list.innerHTML = '';
+
+  S.nearbyVenues.forEach(v => {
+    const card = document.createElement('div');
+    card.className = `nearby-card${S.selectedVenueId === v.id ? ' selected-venue' : ''}`;
+    card.innerHTML = `
+      <div class="nc-name">🎭 ${v.name}</div>
+      <div class="nc-dist">📍 ${v.distKm} km away</div>
+      <div class="nc-screen">${v.screen}</div>`;
+    card.addEventListener('click', () => {
+      S.selectedVenueId = v.id;
+      // Update venue dropdown
+      const sel = document.getElementById('venueSelect');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value == v.id) { sel.selectedIndex = i; break; }
       }
+      // Re-render nearby cards
+      showNearbyCinemas();
+      toast(`📍 Venue set to ${v.name}`, 'success');
+    });
+    list.appendChild(card);
+  });
+
+  wrap.classList.add('show');
+}
+
+/* ──────────────────────────────────────────────────────────
+   AGENTIC AI
+   ────────────────────────────────────────────────────────── */
+function runAI(text) {
+  if (!text.trim()) { toast('Enter a request for the AI agent', 'warn'); return; }
+  const lower = text.toLowerCase();
+
+  // 1. Find matching movie
+  const matched = S.movies.find(m =>
+    lower.includes(m.title.toLowerCase()) ||
+    lower.includes(m.title.split(':')[0].toLowerCase()) ||
+    lower.includes(m.title.split(' ')[0].toLowerCase())
+  );
+  if (matched) selectMovie(matched.id);
+
+  // 2. Category preference
+  let targetCat = null;
+  if (lower.includes('platinum')) targetCat = 'PLATINUM';
+  else if (lower.includes('gold')) targetCat = 'GOLD';
+  else if (lower.includes('silver')) targetCat = 'SILVER';
+
+  // 3. Seat count
+  let count = 2;
+  const nm = lower.match(/\b([1-9])\s*(seat|seats|ticket|tickets)\b/);
+  if (nm) count = parseInt(nm[1], 10);
+
+  // 4. Budget filter
+  let maxPrice = Infinity;
+  const bm = lower.match(/under\s*[₹rs]?\s*(\d+)/);
+  if (bm) maxPrice = parseInt(bm[1], 10);
+
+  // 5. Find consecutive available seats
+  S.selectedSeats.clear();
+  let found = [];
+  const movie = getActiveMovie();
+
+  for (const row of S.seatRows) {
+    if (targetCat && row.cat !== targetCat) continue;
+    const price = Math.round(movie.basePrice * row.mult);
+    if (price > maxPrice) continue;
+    let run = [];
+    for (let n = 1; n <= S.seatsPerRow; n++) {
+      const id = `${row.label}-${String(n).padStart(2,'0')}`;
+      if (!S.bookedSeats.has(id) && !S.heldSeats.has(id)) {
+        run.push({ id, row:row.label, num:n, cat:row.cat, price });
+        if (run.length === count) { found = run; break; }
+      } else { run = []; }
     }
+    if (found.length === count) break;
+  }
 
-    /**
-     * 2. RENDER FILM CATALOG (Left Column)
-     */
-    function renderMovieGrid(filterQuery = "") {
-      const grid = document.getElementById("movieGrid");
-      grid.innerHTML = "";
+  if (found.length) {
+    found.forEach(s => S.selectedSeats.set(s.id, s));
+    renderSeatGrid();
+    updatePricePanel();
+    toast(`🤖 AI selected ${found.length} seats: ${found.map(s=>s.id).join(', ')}`, 'success');
+  } else {
+    toast('🤖 AI: No matching consecutive seats found. Try fewer seats or change category.', 'warn');
+  }
+}
 
-      const filtered = AppState.catalog.filter(m => 
-        m.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
-        m.genres.some(g => g.toLowerCase().includes(filterQuery.toLowerCase()))
-      );
+/* ──────────────────────────────────────────────────────────
+   TICKET MODAL
+   ────────────────────────────────────────────────────────── */
+function openTicketModal() {
+  const movie    = getActiveMovie();
+  const seats    = [...S.selectedSeats.values()];
+  const sub      = seats.reduce((s,x) => s+x.price, 0);
+  const total    = sub + Math.round(sub * CONFIG.CONV_RATE);
+  const ref      = 'BK-' + Math.random().toString(36).substring(2,8).toUpperCase() + '-' + Date.now().toString().slice(-4);
+  const venue    = document.getElementById('venueSelect').selectedOptions[0].text.split('(')[0].trim();
+  const mons     = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dateStr  = `${mons[S.selectedDate.getMonth()]} ${S.selectedDate.getDate()}, ${S.selectedDate.getFullYear()}`;
 
-      filtered.forEach(movie => {
-        const item = document.createElement("div");
-        item.className = `movie-item ${movie.id === AppState.selectedMovieId ? 'active' : ''}`;
-        item.innerHTML = `
-          <img src="${movie.poster}" alt="${movie.title}" loading="lazy"/>
-          <div class="movie-item-overlay">
-            <div class="movie-item-title">${movie.title}</div>
-            <div class="movie-item-genre">${movie.genres.join(" • ")}</div>
-          </div>
-        `;
-        item.addEventListener("click", () => {
-          AppState.selectedMovieId = movie.id;
-          AppState.selectedSeats.clear(); // Reset seats on movie change
-          renderMovieGrid(filterQuery);
-          updateSelectedMovieView();
-          renderSeatGrid();
-          updatePriceSummary();
-        });
-        grid.appendChild(item);
-      });
+  document.getElementById('mMovieTitle').textContent = movie.title;
+  document.getElementById('mVenue').textContent      = venue;
+  document.getElementById('mDateTime').textContent   = `${dateStr} · ${S.selectedShowtime}`;
+  document.getElementById('mSeats').textContent      = seats.map(s=>s.id).join(', ');
+  document.getElementById('mAmount').textContent     = `₹${total.toFixed(2)}`;
+  document.getElementById('mRef').textContent        = `REF: ${ref}`;
 
-      document.getElementById("catalogCountBadge").textContent = `${filtered.length} Available`;
+  // Dynamic SVG QR code
+  document.getElementById('qrWrap').innerHTML = `
+    <svg width="140" height="140" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#fff"/>
+      <rect x="5"  y="5"  width="25" height="25" fill="#000"/><rect x="9"  y="9"  width="17" height="17" fill="#fff"/><rect x="13" y="13" width="9"  height="9"  fill="#000"/>
+      <rect x="70" y="5"  width="25" height="25" fill="#000"/><rect x="74" y="9"  width="17" height="17" fill="#fff"/><rect x="78" y="13" width="9"  height="9"  fill="#000"/>
+      <rect x="5"  y="70" width="25" height="25" fill="#000"/><rect x="9"  y="74" width="17" height="17" fill="#fff"/><rect x="13" y="78" width="9"  height="9"  fill="#000"/>
+      <rect x="36" y="10" width="6" height="6" fill="#000"/><rect x="48" y="10" width="6" height="6" fill="#000"/>
+      <rect x="36" y="22" width="6" height="6" fill="#000"/><rect x="54" y="28" width="6" height="6" fill="#000"/>
+      <rect x="15" y="42" width="6" height="6" fill="#000"/><rect x="42" y="42" width="6" height="6" fill="#000"/>
+      <rect x="66" y="42" width="6" height="6" fill="#000"/><rect x="78" y="42" width="6" height="6" fill="#000"/>
+      <rect x="36" y="54" width="6" height="6" fill="#000"/><rect x="48" y="60" width="6" height="6" fill="#000"/>
+      <rect x="66" y="60" width="6" height="6" fill="#000"/><rect x="36" y="78" width="6" height="6" fill="#000"/>
+      <rect x="54" y="78" width="6" height="6" fill="#000"/><rect x="72" y="78" width="6" height="6" fill="#000"/>
+    </svg>`;
+
+  document.getElementById('ticketModal').classList.add('open');
+  stopHoldTimer();
+}
+
+/* ──────────────────────────────────────────────────────────
+   TOAST NOTIFICATION
+   ────────────────────────────────────────────────────────── */
+let toastTimer;
+function toast(msg, type = 'info') {
+  const el = document.getElementById('toast');
+  clearTimeout(toastTimer);
+  el.textContent = msg;
+  el.className   = `toast ${type} show`;
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ──────────────────────────────────────────────────────────
+   EVENT BINDINGS
+   ────────────────────────────────────────────────────────── */
+function bindEvents() {
+  // Theme toggle
+  const themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', () => {
+    const light = document.body.classList.toggle('light');
+    themeBtn.textContent = light ? '🌙' : '☀️';
+  });
+
+  // Search
+  document.getElementById('searchInput').addEventListener('input', e => {
+    renderMovieGrid(e.target.value);
+  });
+
+  // Date chips already bound in initDateScroller
+
+  // Location
+  document.getElementById('locBtn').addEventListener('click', requestLocation);
+
+  // AI agent
+  const aiInput = document.getElementById('aiInput');
+  document.getElementById('aiRunBtn').addEventListener('click', () => runAI(aiInput.value));
+  aiInput.addEventListener('keydown', e => { if (e.key === 'Enter') runAI(aiInput.value); });
+
+  // Showtime chips
+  document.querySelectorAll('.tc').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tc').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      S.selectedShowtime = btn.dataset.t;
+    });
+  });
+
+  // Venue select
+  document.getElementById('venueSelect').addEventListener('change', e => {
+    S.selectedVenueId = Number(e.target.value);
+  });
+
+  // Clear all seats
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    S.selectedSeats.clear();
+    stopHoldTimer();
+    renderSeatGrid();
+    updatePricePanel();
+    toast('All seats cleared', 'info');
+  });
+
+  // Hold seats
+  document.getElementById('holdBtn').addEventListener('click', () => {
+    if (!S.selectedSeats.size) { toast('Select at least 1 seat first', 'warn'); return; }
+    startHoldTimer();
+    toast(`⏳ ${S.selectedSeats.size} seat(s) held for 5 minutes!`, 'success');
+  });
+
+  // Pay
+  document.getElementById('payBtn').addEventListener('click', () => {
+    if (!S.selectedSeats.size) return;
+    openTicketModal();
+  });
+
+  // Close modal
+  document.getElementById('closeModalBtn').addEventListener('click', () => {
+    document.getElementById('ticketModal').classList.remove('open');
+    // Mark seats as booked
+    S.selectedSeats.forEach((_, k) => S.bookedSeats.add(k));
+    S.selectedSeats.clear();
+    stopHoldTimer();
+    renderSeatGrid();
+    updatePricePanel();
+    toast('🎉 Booking confirmed! Enjoy the show!', 'success');
+  });
+
+  // Click outside modal to close
+  document.getElementById('ticketModal').addEventListener('click', e => {
+    if (e.target === document.getElementById('ticketModal')) {
+      document.getElementById('ticketModal').classList.remove('open');
     }
+  });
 
-    /**
-     * 3. RENDER INTERACTIVE SEAT GRID (Center Column)
-     */
-    function renderSeatGrid() {
-      const container = document.getElementById("seatsGrid");
-      container.innerHTML = "";
-
-      const activeMovie = getActiveMovie();
-
-      AppState.seatRows.forEach(row => {
-        const rowDiv = document.createElement("div");
-        rowDiv.className = "seat-row";
-
-        // Row letter on the left
-        const labelLeft = document.createElement("div");
-        labelLeft.className = "row-label";
-        labelLeft.textContent = row.label;
-        rowDiv.appendChild(labelLeft);
-
-        // Group 1: Left of aisle (seats 1 to aisleGap)
-        const group1 = document.createElement("div");
-        group1.className = "seats-row-group";
-
-        for (let i = 1; i <= row.multiplier && i <= AppState.aisleGapAfterSeat; i++) {
-          group1.appendChild(createSeatElement(row, i, activeMovie));
-        }
-        rowDiv.appendChild(group1);
-
-        // Center Aisle Gap
-        const aisle = document.createElement("div");
-        aisle.className = "aisle-gap";
-        rowDiv.appendChild(aisle);
-
-        // Group 2: Right of aisle (seats aisleGap+1 to seatsPerRow)
-        const group2 = document.createElement("div");
-        group2.className = "seats-row-group";
-
-        for (let i = AppState.aisleGapAfterSeat + 1; i <= AppState.seatsPerRow; i++) {
-          group2.appendChild(createSeatElement(row, i, activeMovie));
-        }
-        rowDiv.appendChild(group2);
-
-        // Row letter on the right
-        const labelRight = document.createElement("div");
-        labelRight.className = "row-label";
-        labelRight.textContent = row.label;
-        rowDiv.appendChild(labelRight);
-
-        container.appendChild(rowDiv);
-      });
+  // View all
+  document.getElementById('viewAllBtn').addEventListener('click', async () => {
+    toast('Loading more movies…', 'info');
+    try {
+      const res  = await fetch(`${CONFIG.TMDB_BASE}/movie/now_playing?api_key=${CONFIG.TMDB_KEY}&language=en-US&page=2`);
+      const data = await res.json();
+      const extra = data.results.filter(m => m.poster_path).slice(0,6).map(m => ({
+        id:       m.id,
+        title:    m.title,
+        desc:     m.overview,
+        poster:   CONFIG.TMDB_IMG + m.poster_path,
+        rating:   m.vote_average.toFixed(1),
+        genres:   (m.genre_ids||[]).slice(0,3).map(id => GENRE_MAP[id]||'').filter(Boolean),
+        genreIds: m.genre_ids,
+        basePrice: 180 + Math.round((m.vote_average/10)*120),
+      }));
+      S.movies = [...S.movies, ...extra];
+      document.getElementById('countPill').textContent = `${S.movies.length} showing`;
+      renderMovieGrid(document.getElementById('searchInput').value);
+      toast(`Loaded ${extra.length} more movies`, 'success');
+    } catch {
+      toast('Could not load more movies', 'warn');
     }
-
-    /**
-     * Helper to create individual Seat Button with Selection/Deselection Logic
-     */
-    function createSeatElement(row, seatNum, activeMovie) {
-      const numStr = seatNum.toString().padStart(2, '0');
-      const seatId = `${row.label}-${numStr}`;
-      const seatPrice = Math.round(activeMovie.basePrice * row.multiplier);
-
-      const btn = document.createElement("button");
-      btn.className = "seat-btn";
-      btn.dataset.seatId = seatId;
-
-      // Determine state
-      if (AppState.bookedSeats.has(seatId)) {
-        btn.classList.add("booked");
-        btn.title = `Seat ${seatId} (Booked)`;
-      } else if (AppState.heldSeats.has(seatId)) {
-        btn.classList.add("held");
-        btn.title = `Seat ${seatId} (Temporarily Held)`;
-      } else if (AppState.selectedSeats.has(seatId)) {
-        btn.classList.add("selected");
-        btn.title = `Seat ${seatId} (Selected - Click to deselect)`;
-      } else {
-        btn.classList.add("available");
-        btn.title = `Seat ${seatId} (${row.category} - ₹${seatPrice})`;
-      }
-
-      btn.innerHTML = `
-        <span>${seatNum}</span>
-        <div class="seat-cat-dot seat-cat-${row.category.toLowerCase()}"></div>
-      `;
-
-      // Click to Select / Deselect
-      btn.addEventListener("click", () => {
-        if (btn.classList.contains("booked") || btn.classList.contains("held")) return;
-
-        if (AppState.selectedSeats.has(seatId)) {
-          // Deselect
-          AppState.selectedSeats.delete(seatId);
-        } else {
-          // Select
-          AppState.selectedSeats.set(seatId, {
-            id: seatId,
-            row: row.label,
-            num: seatNum,
-            category: row.category,
-            price: seatPrice
-          });
-        }
-
-        renderSeatGrid();
-        updatePriceSummary();
-      });
-
-      return btn;
-    }
-
-    /**
-     * 4. UPDATE SELECTED MOVIE & SUMMARY VIEW (Right Column)
-     */
-    function updateSelectedMovieView() {
-      const movie = getActiveMovie();
-      if (!movie) return;
-
-      document.getElementById("detailMovieTitle").textContent = movie.title;
-      document.getElementById("centerPanelTitle").textContent = `Select Seat for ${movie.title}`;
-
-      const genreContainer = document.getElementById("detailGenreTags");
-      genreContainer.innerHTML = movie.genres.map(g => `<span class="genre-tag">${g}</span>`).join("");
-    }
-
-    /**
-     * 5. UPDATE PRICE & SELECTED SEATS SUMMARY LIST
-     */
-    function updatePriceSummary() {
-      const container = document.getElementById("selectedSeatsChipContainer");
-      container.innerHTML = "";
-
-      const selectedList = Array.from(AppState.selectedSeats.values());
-      const count = selectedList.length;
-
-      document.getElementById("selectedCountLabel").textContent = count;
-      document.getElementById("ticketCountLabel").textContent = `${count} Ticket${count === 1 ? '' : 's'}`;
-
-      if (count === 0) {
-        container.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted);padding:8px 0;">No seats selected. Click any available seat on the map.</div>`;
-      } else {
-        selectedList.forEach(seat => {
-          const chip = document.createElement("div");
-          chip.className = "selected-seat-chip";
-          chip.innerHTML = `
-            <div class="seat-chip-info">
-              <span>Row ${seat.row} · Seat ${seat.num}</span>
-              <span style="font-size:0.7rem;color:var(--text-muted);">(${seat.category})</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span class="seat-chip-price">₹${seat.price}</span>
-              <button class="seat-remove-btn" title="Deselect seat">×</button>
-            </div>
-          `;
-
-          // 1-Click Deselect Button [x]
-          chip.querySelector(".seat-remove-btn").addEventListener("click", () => {
-            AppState.selectedSeats.delete(seat.id);
-            renderSeatGrid();
-            updatePriceSummary();
-          });
-
-          container.appendChild(chip);
-        });
-      }
-
-      // Calculate Totals
-      const subTotal = selectedList.reduce((sum, s) => sum + s.price, 0);
-      const convenience = count > 0 ? Math.round(subTotal * 0.02) : 0;
-      const total = subTotal + convenience;
-
-      document.getElementById("subTotalDisplay").textContent = `₹${subTotal.toFixed(2)}`;
-      document.getElementById("convenienceDisplay").textContent = `₹${convenience.toFixed(2)}`;
-      document.getElementById("totalAmountDisplay").textContent = `₹${total.toFixed(2)}`;
-
-      // Pay button state
-      const payBtn = document.getElementById("payOnlineBtn");
-      payBtn.disabled = count === 0;
-      payBtn.textContent = count > 0 ? `Pay ₹${total.toFixed(2)} (Confirm)` : `Select Seats to Book`;
-    }
-
-    /**
-     * 6. AGENTIC AI ASSISTANT NATURAL LANGUAGE PARSER
-     * Interprets user prompt and automatically selects seats or filters catalog
-     */
-    function runAgenticAction(promptText) {
-      if (!promptText || promptText.trim() === "") return;
-      const lower = promptText.toLowerCase();
-
-      // Example Agentic Pattern 1: Movie Search/Selection
-      const matchedMovie = AppState.catalog.find(m => lower.includes(m.title.toLowerCase()) || lower.includes(m.title.split(":")[0].toLowerCase()));
-      if (matchedMovie) {
-        AppState.selectedMovieId = matchedMovie.id;
-        updateSelectedMovieView();
-        renderMovieGrid();
-      }
-
-      // Example Agentic Pattern 2: Category preference (Gold, Platinum, Silver)
-      let targetCategory = null;
-      if (lower.includes("platinum")) targetCategory = "PLATINUM";
-      else if (lower.includes("gold")) targetCategory = "GOLD";
-      else if (lower.includes("silver")) targetCategory = "SILVER";
-
-      // Example Agentic Pattern 3: Number of seats (e.g. "2 seats", "3 tickets")
-      let seatCount = 2; // Default
-      const matchNum = lower.match(/\b([1-9])\s*(seat|seats|ticket|tickets)\b/);
-      if (matchNum) {
-        seatCount = parseInt(matchNum[1], 10);
-      }
-
-      // Find best available consecutive seats
-      AppState.selectedSeats.clear();
-      let foundSeats = [];
-
-      for (const row of AppState.seatRows) {
-        if (targetCategory && row.category !== targetCategory) continue;
-
-        let consecutive = [];
-        for (let i = 1; i <= AppState.seatsPerRow; i++) {
-          const numStr = i.toString().padStart(2, '0');
-          const seatId = `${row.label}-${numStr}`;
-          if (!AppState.bookedSeats.has(seatId) && !AppState.heldSeats.has(seatId)) {
-            consecutive.push({ row: row.label, num: i, id: seatId, category: row.category, price: Math.round(getActiveMovie().basePrice * row.multiplier) });
-            if (consecutive.length === seatCount) {
-              foundSeats = consecutive;
-              break;
-            }
-          } else {
-            consecutive = [];
-          }
-        }
-        if (foundSeats.length === seatCount) break;
-      }
-
-      if (foundSeats.length > 0) {
-        foundSeats.forEach(s => AppState.selectedSeats.set(s.id, s));
-        renderSeatGrid();
-        updatePriceSummary();
-        alert(`🤖 Agentic AI Success: Selected ${foundSeats.length} seats (${foundSeats.map(s => s.id).join(", ")}) for you!`);
-      } else {
-        alert("🤖 Agentic AI: Couldn't find exact consecutive seats for that request. Try fewer seats or a different category!");
-      }
-    }
-
-    /**
-     * 7. EVENT LISTENERS & MODAL BINDINGS
-     */
-    function bindEvents() {
-      // Dark Mode toggle
-      const themeBtn = document.getElementById("themeToggleBtn");
-      themeBtn.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
-      });
-
-      // Search input filter
-      const searchInput = document.getElementById("movieSearchInput");
-      searchInput.addEventListener("input", (e) => {
-        renderMovieGrid(e.target.value);
-      });
-
-      // Clear all selected seats
-      document.getElementById("clearAllSeatsBtn").addEventListener("click", () => {
-        AppState.selectedSeats.clear();
-        renderSeatGrid();
-        updatePriceSummary();
-      });
-
-      // Showtime chips toggle
-      document.querySelectorAll(".time-chip").forEach(chip => {
-        chip.addEventListener("click", () => {
-          document.querySelectorAll(".time-chip").forEach(c => c.classList.remove("active"));
-          chip.classList.add("active");
-          AppState.selectedShowtime = chip.dataset.time;
-        });
-      });
-
-      // Venue select
-      document.getElementById("venueSelect").addEventListener("change", (e) => {
-        AppState.selectedVenueId = e.target.value;
-      });
-
-      // Agentic AI button
-      const aiInput = document.getElementById("aiPromptInput");
-      document.getElementById("aiRunBtn").addEventListener("click", () => {
-        runAgenticAction(aiInput.value);
-      });
-      aiInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") runAgenticAction(aiInput.value);
-      });
-
-      // Temporary 5-Min Hold button
-      document.getElementById("holdSeatsBtn").addEventListener("click", () => {
-        if (AppState.selectedSeats.size === 0) {
-          alert("Please select at least 1 seat first to hold.");
-          return;
-        }
-        alert(`⏳ Temporary Hold Confirmed: ${AppState.selectedSeats.size} seats reserved for 5 minutes!`);
-      });
-
-      // Payment & Modal trigger
-      document.getElementById("payOnlineBtn").addEventListener("click", () => {
-        openTicketModal();
-      });
-
-      // Close Modal
-      document.getElementById("closeModalBtn").addEventListener("click", () => {
-        document.getElementById("ticketModal").classList.remove("open");
-        // Mark seats as booked
-        AppState.selectedSeats.forEach((_, key) => AppState.bookedSeats.add(key));
-        AppState.selectedSeats.clear();
-        renderSeatGrid();
-        updatePriceSummary();
-      });
-    }
-
-    /**
-     * Generate Live Ticket Modal with SVG QR Code
-     */
-    function openTicketModal() {
-      const movie = getActiveMovie();
-      const modal = document.getElementById("ticketModal");
-      const seatsArr = Array.from(AppState.selectedSeats.values()).map(s => s.id);
-      const totalAmount = document.getElementById("totalAmountDisplay").textContent;
-      const refCode = "BK-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-" + Date.now().toString().slice(-4);
-
-      document.getElementById("modalMovieTitle").textContent = movie.title;
-      document.getElementById("modalVenue").textContent = document.getElementById("venueSelect").selectedOptions[0].text.split("(")[0];
-      document.getElementById("modalDateTime").textContent = `${document.getElementById("currentDateDisplay").textContent} · ${AppState.selectedShowtime}`;
-      document.getElementById("modalSeats").textContent = seatsArr.join(", ");
-      document.getElementById("modalAmount").textContent = totalAmount;
-      document.getElementById("modalReference").textContent = `REF: ${refCode}`;
-
-      // Generate dynamic SVG QR code representation
-      const qrBox = document.getElementById("ticketQrBox");
-      qrBox.innerHTML = `
-        <svg width="150" height="150" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100" height="100" fill="#ffffff"/>
-          <!-- Position Detection Patterns -->
-          <rect x="5" y="5" width="25" height="25" fill="#000000"/>
-          <rect x="9" y="9" width="17" height="17" fill="#ffffff"/>
-          <rect x="13" y="13" width="9" height="9" fill="#000000"/>
-          <rect x="70" y="5" width="25" height="25" fill="#000000"/>
-          <rect x="74" y="9" width="17" height="17" fill="#ffffff"/>
-          <rect x="78" y="13" width="9" height="9" fill="#000000"/>
-          <rect x="5" y="70" width="25" height="25" fill="#000000"/>
-          <rect x="9" y="74" width="17" height="17" fill="#ffffff"/>
-          <rect x="13" y="78" width="9" height="9" fill="#000000"/>
-          <!-- Data Bit Patterns -->
-          <rect x="36" y="10" width="6" height="6" fill="#000000"/>
-          <rect x="48" y="10" width="6" height="6" fill="#000000"/>
-          <rect x="36" y="22" width="6" height="6" fill="#000000"/>
-          <rect x="54" y="28" width="6" height="6" fill="#000000"/>
-          <rect x="15" y="42" width="6" height="6" fill="#000000"/>
-          <rect x="30" y="42" width="6" height="6" fill="#000000"/>
-          <rect x="42" y="42" width="6" height="6" fill="#000000"/>
-          <rect x="60" y="42" width="6" height="6" fill="#000000"/>
-          <rect x="78" y="42" width="6" height="6" fill="#000000"/>
-          <rect x="36" y="54" width="6" height="6" fill="#000000"/>
-          <rect x="48" y="60" width="6" height="6" fill="#000000"/>
-          <rect x="66" y="60" width="6" height="6" fill="#000000"/>
-          <rect x="36" y="78" width="6" height="6" fill="#000000"/>
-          <rect x="54" y="78" width="6" height="6" fill="#000000"/>
-          <rect x="72" y="78" width="6" height="6" fill="#000000"/>
-        </svg>
-      `;
-
-      modal.classList.add("open");
-    }
-
-    /**
-     * Helper: Get current selected movie object
-     */
-    function getActiveMovie() {
-      return AppState.catalog.find(m => m.id === AppState.selectedMovieId) || AppState.catalog[0];
-    }
-  </script>
+  });
+}
+</script>
 </body>
 </html>

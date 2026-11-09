@@ -10,8 +10,8 @@ import { BookingSummary } from './components/BookingSummary';
 import { TicketModal } from './components/TicketModal';
 
 export const App: React.FC = () => {
-  // Theme state: false = FilmTIX clean light; true = IMAGIX dark cinema
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Theme state: false = Black & Red Cinema Theme (Default); true = Light Mode
+  const [isLightMode, setIsLightMode] = useState(false);
 
   // Catalog & Venues
   const [catalog, setCatalog] = useState<ContentItem[]>([]);
@@ -47,14 +47,14 @@ export const App: React.FC = () => {
     loadData();
   }, []);
 
-  // Sync dark mode class on document.body
+  // Sync theme class on document.body (Default: Black & Red)
   useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
+    if (isLightMode) {
+      document.body.classList.add('light-mode');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.body.classList.remove('light-mode');
     }
-  }, [isDarkMode]);
+  }, [isLightMode]);
 
   // Handle Seat Selection & Deselection Toggle
   const handleToggleSeat = (seat: Seat) => {
@@ -160,8 +160,8 @@ export const App: React.FC = () => {
     <div className="bookit-app-container">
       {/* Topbar */}
       <Header
-        isDarkMode={isDarkMode}
-        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+        isDarkMode={!isLightMode}
+        onToggleTheme={() => setIsLightMode(!isLightMode)}
         selectedDateText={selectedDateText}
       />
 
